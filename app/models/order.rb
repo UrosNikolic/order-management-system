@@ -8,7 +8,7 @@ class Order < ApplicationRecord
 
   attr_accessor :cancelation_reason
 
-  VAT = 20
+  DEFAULT_VAT = 20
 
   aasm column: :status do
     error_on_all_events :handle_error_for_all_events
@@ -32,13 +32,14 @@ class Order < ApplicationRecord
   end
 
   def transition(new_status)
+    raise UnprocessableError.new('Invalid status') if new_status.empty?
     self.public_send("#{new_status}!")
   end
 
   private
 
   def has_line_items?
-    line_items.exists?
+    line_items.exists? || (raise UnprocessableError.new('Cannot transition to placed without line items added'))
   end
 
   def save_transition_event
@@ -51,7 +52,7 @@ class Order < ApplicationRecord
   end
 
   def set_defaults
-    self.vat = VAT
-    self.date = DateTime.now
+    self.vat = self.vat || DEFAULT_VAT
+    self.date = self.date || DateTime.now
   end
 end

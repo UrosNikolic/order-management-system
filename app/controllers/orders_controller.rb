@@ -40,7 +40,7 @@ class OrdersController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(:vat, :date)
+    params.permit(:vat, :date)
   end
 
   def validate_order_update_status

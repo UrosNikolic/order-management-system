@@ -5,7 +5,7 @@ class StatusTransition < ApplicationRecord
 
   def can_create_record?
     if to == 'canceled' && !reason
-      errors.add(:product, 'Cannot transition to canceled without reason')
+      errors.add(:order, 'Cannot transition to canceled without reason')
       throw(:abort)
     end
   end
